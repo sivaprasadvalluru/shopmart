@@ -57,8 +57,13 @@ export interface Cart {
 export const api = {
   getCategories: () => request<Category[]>('/categories'),
 
-  getProducts: (categoryId?: number) =>
-    request<Product[]>(categoryId != null ? `/products?categoryId=${categoryId}` : '/products'),
+  getProducts: (categoryId?: number, name?: string) => {
+    const params = new URLSearchParams()
+    if (categoryId != null) params.set('categoryId', String(categoryId))
+    if (name && name.trim()) params.set('name', name.trim())
+    const qs = params.toString()
+    return request<Product[]>(qs ? `/products?${qs}` : '/products')
+  },
 
   getProduct: (id: number) => request<Product>(`/products/${id}`),
 

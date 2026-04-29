@@ -75,6 +75,18 @@ button:disabled { opacity: 0.4; cursor: default; }
 }
 .page-header h1 { font-size: 1.6rem; }
 
+.search-box {
+  flex: 1;
+  max-width: 320px;
+  padding: 8px 14px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.search-box:focus { border-color: #2563eb; }
+
 .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
 .filter-btn {
   padding: 6px 14px;
