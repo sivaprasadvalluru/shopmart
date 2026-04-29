@@ -88,6 +88,16 @@ class CartControllerTest {
     }
 
     @Test
+    void addItemReturnsNonEmptyItemsArray() throws Exception {
+        mockMvc.perform(post("/api/cart/items")
+                        .header("X-Session-Id", "test-nonempty-session")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"productId\": 1, \"quantity\": 2}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items", not(empty())));
+    }
+
+    @Test
     void cartWithoutSessionHeaderUsesDefault() throws Exception {
         mockMvc.perform(get("/api/cart").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

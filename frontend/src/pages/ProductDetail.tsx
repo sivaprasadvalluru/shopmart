@@ -37,6 +37,9 @@ export default function ProductDetail() {
         <Link to="/" className="back-link">← Back to products</Link>
         <p className="detail-category">{product.category.name}</p>
         <h1>{product.name}</h1>
+        {product.shortDescription && (
+          <p className="detail-short-description">{product.shortDescription}</p>
+        )}
         <p className="detail-price">${product.price.toFixed(2)}</p>
         <p className="detail-description">{product.description}</p>
         <div className="qty-row">

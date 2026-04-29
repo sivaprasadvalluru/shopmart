@@ -33,6 +33,7 @@ export interface Category {
 export interface Product {
   id: number
   name: string
+  shortDescription: string | null
   description: string
   price: number
   imageUrl: string

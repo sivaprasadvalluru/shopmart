@@ -129,6 +129,7 @@ button:disabled { opacity: 0.4; cursor: default; }
 .detail-info h1 { font-size: 1.7rem; }
 .detail-price { font-size: 1.6rem; font-weight: 700; color: #2563eb; }
 .detail-category { color: #6b7280; font-size: 0.9rem; }
+.detail-short-description { font-size: 1rem; font-weight: 500; color: #4b5563; }
 .detail-description { line-height: 1.6; color: #374151; }
 .qty-row { display: flex; align-items: center; gap: 12px; }
 .qty-row input {
