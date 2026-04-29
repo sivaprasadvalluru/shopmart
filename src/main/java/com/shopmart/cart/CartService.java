@@ -23,7 +23,9 @@ public class CartService {
     }
 
     public Cart addItem(String sessionId, Long productId, int quantity) {
-        // Intentional course defect: quantity is not validated — 0 or negative values are accepted
+        if (quantity < 1) {
+            throw new IllegalArgumentException("Quantity must be at least 1");
+        }
         Cart cart = getCart(sessionId);
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found: " + productId));
@@ -33,7 +35,6 @@ public class CartService {
                 .findFirst();
 
         if (existing.isPresent()) {
-            // Intentional course defect: merging quantities without bounds check
             existing.get().setQuantity(existing.get().getQuantity() + quantity);
         } else {
             cart.getItems().add(new CartItem(
@@ -48,7 +49,9 @@ public class CartService {
     }
 
     public Cart updateItem(String sessionId, Long productId, int quantity) {
-        // Intentional course defect: quantity is not validated — 0 or negative values are accepted
+        if (quantity < 1) {
+            throw new IllegalArgumentException("Quantity must be at least 1");
+        }
         Cart cart = getCart(sessionId);
         cart.getItems().stream()
                 .filter(i -> i.getProductId().equals(productId))
