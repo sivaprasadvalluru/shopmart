@@ -68,23 +68,22 @@ class CartControllerTest {
                 .andExpect(jsonPath("$.items", hasSize(0)));
     }
 
-    // Intentional course defect: test accepts 0 and negative quantities (no validation guard)
     @Test
-    void addItemWithZeroQuantityIsAccepted() throws Exception {
+    void addItemWithZeroQuantityReturnsBadRequest() throws Exception {
         mockMvc.perform(post("/api/cart/items")
                         .header("X-Session-Id", "test-zero-qty-session")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"productId\": 1, \"quantity\": 0}"))
-                .andExpect(status().isOk());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
-    void addItemWithNegativeQuantityIsAccepted() throws Exception {
+    void addItemWithNegativeQuantityReturnsBadRequest() throws Exception {
         mockMvc.perform(post("/api/cart/items")
                         .header("X-Session-Id", "test-neg-qty-session")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"productId\": 1, \"quantity\": -3}"))
-                .andExpect(status().isOk());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
