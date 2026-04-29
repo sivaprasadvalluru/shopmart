@@ -65,4 +65,8 @@ public class CartService {
         cart.getItems().removeIf(i -> i.getProductId().equals(productId));
         return cart;
     }
+
+    public void clearCart(String sessionId) {
+        carts.remove(sessionId);
+    }
 }
