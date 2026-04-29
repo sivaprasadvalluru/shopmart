@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsStringIgnoringCase;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -44,6 +45,29 @@ class ProductControllerTest {
     void getProductNotFound() throws Exception {
         mockMvc.perform(get("/api/products/9999").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void searchProductsByName() throws Exception {
+        mockMvc.perform(get("/api/products?name=headphones").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(1))))
+                .andExpect(jsonPath("$[0].name", containsStringIgnoringCase("headphones")));
+    }
+
+    @Test
+    void searchProductsByNameAndCategory() throws Exception {
+        mockMvc.perform(get("/api/products?categoryId=1&name=headphones").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].category.id", is(1)))
+                .andExpect(jsonPath("$[0].name", containsStringIgnoringCase("headphones")));
+    }
+
+    @Test
+    void searchProductsByNameNoMatch() throws Exception {
+        mockMvc.perform(get("/api/products?name=zzznomatch").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
     }
 
     @Test

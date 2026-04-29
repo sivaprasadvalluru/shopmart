@@ -6,6 +6,8 @@ export default function ProductList() {
   const [categories, setCategories] = useState<Category[]>([])
   const [products, setProducts] = useState<Product[]>([])
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | undefined>(undefined)
+  const [searchInput, setSearchInput] = useState('')
+  const [searchQuery, setSearchQuery] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const navigate = useNavigate()
@@ -14,13 +16,19 @@ export default function ProductList() {
     api.getCategories().then(setCategories).catch(() => {})
   }, [])
 
+  // Debounce: only fire the API call 300 ms after the user stops typing
+  useEffect(() => {
+    const timer = setTimeout(() => setSearchQuery(searchInput), 300)
+    return () => clearTimeout(timer)
+  }, [searchInput])
+
   useEffect(() => {
     setLoading(true)
-    api.getProducts(selectedCategoryId)
+    api.getProducts(selectedCategoryId, searchQuery)
       .then(setProducts)
       .catch(() => setError('Failed to load products.'))
       .finally(() => setLoading(false))
-  }, [selectedCategoryId])
+  }, [selectedCategoryId, searchQuery])
 
   const handleAddToCart = async (e: React.MouseEvent, productId: number) => {
     e.stopPropagation()
@@ -33,6 +41,14 @@ export default function ProductList() {
     <div className="container">
       <div className="page-header">
         <h1>Products</h1>
+        <input
+          className="search-box"
+          type="search"
+          placeholder="Search products…"
+          value={searchInput}
+          onChange={e => setSearchInput(e.target.value)}
+          aria-label="Search products"
+        />
       </div>
 
       <div className="filter-bar">
@@ -55,6 +71,8 @@ export default function ProductList() {
 
       {loading ? (
         <p className="loading">Loading…</p>
+      ) : products.length === 0 ? (
+        <p className="error-msg" style={{ color: '#6b7280' }}>No products found.</p>
       ) : (
         <div className="product-grid">
           {products.map(p => (

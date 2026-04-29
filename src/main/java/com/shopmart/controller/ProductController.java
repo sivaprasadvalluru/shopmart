@@ -18,9 +18,19 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<Product> listProducts(@RequestParam(required = false) Long categoryId) {
-        if (categoryId != null) {
+    public List<Product> listProducts(
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) String name) {
+        boolean hasCategory = categoryId != null;
+        boolean hasName = name != null && !name.isBlank();
+        if (hasCategory && hasName) {
+            return productRepository.findByCategoryIdAndNameContainingIgnoreCase(categoryId, name);
+        }
+        if (hasCategory) {
             return productRepository.findByCategoryId(categoryId);
+        }
+        if (hasName) {
+            return productRepository.findByNameContainingIgnoreCase(name);
         }
         return productRepository.findAll();
     }
