@@ -6,6 +6,7 @@ export default function CartPage() {
   const [cart, setCart] = useState<Cart | null>(null)
   const [loading, setLoading] = useState(true)
   const [ordered, setOrdered] = useState(false)
+  const [checkoutError, setCheckoutError] = useState('')
 
   useEffect(() => {
     api.getCart()
@@ -25,10 +26,14 @@ export default function CartPage() {
     }
   }
 
-  // Intentional course defect: checkout is allowed even when cart is empty — no guard
-  const handleCheckout = () => {
-    setOrdered(true)
-    setCart(prev => prev ? { ...prev, items: [], total: 0 } : prev)
+  const handleCheckout = async () => {
+    setCheckoutError('')
+    try {
+      await api.checkout()
+      setOrdered(true)
+    } catch {
+      setCheckoutError('Cannot place an order with an empty cart.')
+    }
   }
 
   if (loading) return <p className="loading">Loading cart…</p>
@@ -73,14 +78,19 @@ export default function CartPage() {
         ))
       )}
 
-      {cart && (
+      {cart && cart.items.length > 0 && (
         <div className="cart-summary">
           <div className="total-row">
             <span>Total</span>
             <span>${cart.total.toFixed(2)}</span>
           </div>
-          {/* Intentional course defect: button enabled even when cart is empty */}
-          <button className="btn-primary" style={{ width: '100%' }} onClick={handleCheckout}>
+          {checkoutError && <p className="error-msg" style={{ marginBottom: '12px' }}>{checkoutError}</p>}
+          <button
+            className="btn-primary"
+            style={{ width: '100%' }}
+            onClick={handleCheckout}
+            disabled={cart.items.length === 0}
+          >
             Place Order
           </button>
         </div>

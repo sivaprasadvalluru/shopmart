@@ -54,4 +54,15 @@ public class CartController {
             @PathVariable Long productId) {
         return cartService.removeItem(resolveSession(sessionId), productId);
     }
+
+    @PostMapping("/checkout")
+    public ResponseEntity<Map<String, String>> checkout(
+            @RequestHeader(value = "X-Session-Id", required = false) String sessionId) {
+        Cart cart = cartService.getCart(resolveSession(sessionId));
+        if (cart.getItems().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Cannot checkout with an empty cart"));
+        }
+        cartService.clearCart(resolveSession(sessionId));
+        return ResponseEntity.ok(Map.of("message", "Order placed successfully"));
+    }
 }

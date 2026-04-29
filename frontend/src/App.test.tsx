@@ -13,6 +13,7 @@ vi.mock('./api/client', () => ({
     addToCart: vi.fn(),
     updateCartItem: vi.fn(),
     removeCartItem: vi.fn(),
+    checkout: vi.fn(),
   },
 }))
 
@@ -48,13 +49,27 @@ describe('App routing', () => {
     expect(await screen.findByText('Your Cart')).toBeInTheDocument()
   })
 
-  it('shows Place Order button even when cart is empty', async () => {
+  it('hides Place Order button when cart is empty', async () => {
     render(
       <MemoryRouter initialEntries={['/cart']}>
         <App />
       </MemoryRouter>
     )
-    // Intentional course defect: Place Order is always rendered regardless of cart contents
+    expect(await screen.findByText('Your Cart')).toBeInTheDocument()
+    expect(screen.queryByText('Place Order')).not.toBeInTheDocument()
+  })
+
+  it('shows Place Order button when cart has items', async () => {
+    mockApi.getCart.mockResolvedValue({
+      sessionId: 'x',
+      items: [{ productId: 1, productName: 'Headphones', price: 99.99, quantity: 1, imageUrl: '' }],
+      total: 99.99,
+    })
+    render(
+      <MemoryRouter initialEntries={['/cart']}>
+        <App />
+      </MemoryRouter>
+    )
     expect(await screen.findByText('Place Order')).toBeInTheDocument()
   })
 })

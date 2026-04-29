@@ -78,4 +78,7 @@ export const api = {
 
   removeCartItem: (productId: number) =>
     request<Cart>(`/cart/items/${productId}`, { method: 'DELETE' }),
+
+  checkout: () =>
+    request<{ message: string }>('/cart/checkout', { method: 'POST' }),
 }
